@@ -1,19 +1,20 @@
 import mftool
 
+mf = mftool.Mftool()
 class MfData:
-    def __init__(self):
-        self.mf = mftool.Mftool()
-        self.__mf_schemes = []
+    def __init__(self, code=""):
+        self.code = code
+        self.__nav = 0
 
-    @property
-    def mf_schemes(self):
-        schemes = self.mf.get_available_schemes("")
-        self.__mf_schemes = list(schemes.items())[1:]
-        return self.__mf_schemes
+    @staticmethod
+    def mf_schemes():
+        schemes = mf.get_available_schemes("")
+        mf_schemes = list(schemes.items())[1:]
+        return mf_schemes
 
-    def get_current_nav(self,code):
+    def get_current_nav(self):
         try:
-            nav = self.mf.get_scheme_quote(code)['nav']
+            nav = mf.get_scheme_quote(self.code)['nav']
         except TypeError:
             nav = 0
 
