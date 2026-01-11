@@ -36,13 +36,14 @@ def update_current_value():
     mfunds = MfData()
     stock = StockData()
 
-    DAO.savings_summary()
+    DAO.investment_growth()
     invest = DAO.get_investments()
 
     for inv in invest:
         try:
+            inv_id = inv.get('investment_id')
             mode = inv.get('investment_mode')
-            code = inv.get('scheme_symbols').strip()
+            code = inv.get('market_code').strip()
             if mode == 'Mutual Funds':
                 mfunds.code = code
                 current_value = mfunds.get_current_nav()
@@ -59,7 +60,7 @@ def update_current_value():
                 logger_services.warning(f"Skipping update for {code} due to missing current value")
                 continue
 
-            DAO.update_current_value(code, current_value)
+            DAO.update_current_value(inv_id, current_value)
 
         except Exception as e:
             logger_services.error(

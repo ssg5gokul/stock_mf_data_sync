@@ -24,12 +24,6 @@ def get_db_cursor(commit=False):
 
     cursor = connection.cursor(dictionary=True)
 
-    # yield cursor
-    # connection.commit()
-    #
-    # cursor.close()
-    # connection.close()
-
     try:
         yield cursor
         if commit:
@@ -47,8 +41,12 @@ def get_db_cursor(commit=False):
 
 def insert_funds(schemes):
     with get_db_cursor(commit=True) as cursor:
-        cursor.executemany("insert into asset_master (scheme_symbol, scheme_name, asset_type) values (%s, %s, "
-                           "'Mutual Funds')", schemes)
+        cursor.executemany("insert into dim_asset_master (scheme_symbol, scheme_name, asset_type) "
+                           "values (%s, %s, 'Mutual Funds') as new_data "
+                           "ON DUPLICATE KEY UPDATE "
+                           "scheme_symbol = new_data.scheme_symbol, "
+                           "scheme_name = new_data.scheme_name, "
+                           "asset_type = new_data.asset_type;", schemes)
 
         if cursor.rowcount == 0:
             logger_DAO.warning(
@@ -61,7 +59,8 @@ def insert_funds(schemes):
 
 def delete_funds():
     with get_db_cursor(commit=True) as cursor:
-        cursor.execute("delete from asset_master where asset_type='Mutual Funds'")
+        cursor.execute("delete from dim_asset_master where asset_type='Mutual Funds'"
+                       "and scheme_symbol not in (select ifnull(market_code,'NA') from dim_investment_master);")
 
         deleted = cursor.rowcount
 
@@ -70,7 +69,11 @@ def delete_funds():
 
 def insert_stocks(stocks):
     with get_db_cursor(commit=True) as cursor:
-        cursor.executemany("insert into asset_master (scheme_symbol, asset_type) values (%s, 'Stocks')", stocks)
+        cursor.executemany("insert into dim_asset_master (scheme_symbol, asset_type) "
+                           "values (%s, 'Stocks') as new_data "
+                           "ON DUPLICATE KEY UPDATE "
+                           "scheme_symbol = new_data.scheme_symbol, "
+                           "asset_type = new_data.asset_type;", stocks)
 
         if cursor.rowcount == 0:
             logger_DAO.warning(
@@ -82,16 +85,17 @@ def insert_stocks(stocks):
 
 def delete_stocks():
     with get_db_cursor(commit=True) as cursor:
-        cursor.execute("delete from asset_master where asset_type='Stocks'")
+        cursor.execute("delete from dim_asset_master where asset_type='Stocks' "
+                       "and scheme_symbol not in (select ifnull(market_code,'NA') from dim_investment_master);")
 
         deleted = cursor.rowcount
 
     logger_DAO.info(f"Deleted {deleted} stocks from the asset_master table.")
 
 
-def savings_summary():
+def investment_growth():
     with get_db_cursor(commit=True) as cursor:
-        cursor.callproc('set_investment_growth_value')
+        cursor.callproc('populate_fact_investment_growth')
 
         if cursor.rowcount == 0:
             logger_DAO.warning(
@@ -103,8 +107,8 @@ def savings_summary():
 
 def update_current_value(code, val):
     with get_db_cursor(commit=True) as cursor:
-        cursor.execute("update investment_growth set current_value =%s where scheme_symbols = %s and `date`= %s",
-                       (val, code, date.today()))
+        cursor.execute("update fact_investment_growth set current_value =%s "
+                       "where investment_id = %s and `date`= %s", (val, code, date.today()))
 
         if cursor.rowcount == 0:
             logger_DAO.warning(
@@ -116,6 +120,8 @@ def update_current_value(code, val):
 
 def get_investments():
     with get_db_cursor() as cursor:
-        cursor.execute("SELECT investment_mode, scheme_symbols FROM investment_growth where `date`=CURDATE()")
+        cursor.execute("SELECT im.investment_id, investment_mode, market_code "
+                       "FROM fact_investment_growth ig join dim_investment_master im "
+                       "on ig.investment_id = im.investment_id where `date`=CURDATE()")
         investments = cursor.fetchall()
         return investments
