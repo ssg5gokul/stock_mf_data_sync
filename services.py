@@ -23,9 +23,12 @@ def insert_stock_etf_symbols():
     """It deletes the past data and inserts new."""
     stock = StockData()
     stock_symbols = stock.client.stock_symbols
-    if len(stock_symbols) > 0:
+    etf_symbols = stock.client.etf_symbols
+    symbols = stock_symbols + etf_symbols
+
+    if len(symbols) > 0:
         DAO.delete_stocks()
-        DAO.insert_stocks(stock_symbols)
+        DAO.insert_stocks(symbols)
 
     else:
         logger_services.warning("No scheme codes are available to be inserted. Please check StockAPI logs for further "

@@ -1,6 +1,7 @@
 import my_logger
 import datetime
 import nsetools
+from nsefin import nse
 
 TODAY = str(datetime.date.today())
 logger_StockAPI = my_logger.config_logger(__name__)
@@ -8,11 +9,14 @@ logger_StockAPI = my_logger.config_logger(__name__)
 class StockClient:
     def __init__(self):
         self.nse_stocks = None
+        self.nse_etf = None
         self.__stock_symbols = []
+        self.__etf_symbols = []
 
     def connect(self):
         try:
             self.nse_stocks = nsetools.nse.Nse()
+            self.nse_etf = nse
             return True
 
         except Exception as e:
@@ -28,6 +32,17 @@ class StockClient:
             logger_StockAPI.warning(f"No stock symbols were returned due to error - {e}")
 
         return self.__stock_symbols
+
+    @property
+    def etf_symbols(self):
+        try:
+            etf_details = self.nse_etf.get_etf_list()
+            self.__etf_symbols = [(symbol['Symbol'],) for symbol in etf_details.to_dict(orient='records')]
+
+        except AttributeError as e:
+            logger_StockAPI.warning(f"No stock symbols were returned due to error - {e}")
+
+        return self.__etf_symbols
 
 
 class StockData:

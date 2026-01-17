@@ -112,7 +112,7 @@ def update_current_value(code, val):
 
         if cursor.rowcount == 0:
             logger_DAO.warning(
-                f"No row updated for {code} on {date.today()}"
+                f"No row updated for investment_id: {code} on {date.today()}"
             )
 
     logger_DAO.info("Updated the daily value of the invested stock/funds.")
