@@ -1,8 +1,12 @@
 import mysql.connector
 import my_logger
+import os
 from datetime import date
 from mysql.connector import Error
 from contextlib import contextmanager
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger_DAO = my_logger.config_logger(__name__)
 
@@ -10,10 +14,10 @@ logger_DAO = my_logger.config_logger(__name__)
 @contextmanager
 def get_db_cursor(commit=False):
     connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="root",
-        database="expense_manager"
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME")
     )
 
     if connection.is_connected():
