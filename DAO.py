@@ -65,7 +65,6 @@ def delete_funds():
     with get_db_cursor(commit=True) as cursor:
         cursor.execute("delete from dim_asset_master where asset_type='Mutual Funds'"
                        "and scheme_symbol not in (select ifnull(market_code,'NA') from dim_investment_master);")
-
         deleted = cursor.rowcount
 
     logger_DAO.info(f"Deleted {deleted} funds from the asset_master table.")
@@ -122,10 +121,38 @@ def update_current_value(code, val):
     logger_DAO.info("Updated the daily value of the invested stock/funds.")
 
 
+# def get_curr_investments():
+#     with get_db_cursor() as cursor:
+#         cursor.execute("SELECT im.start_date, im.investment_id, investment_mode, market_code "
+#                        "FROM fact_investment_growth ig join dim_investment_master im "
+#                        "on ig.investment_id = im.investment_id where `date`=CURDATE()")
+#         investments = cursor.fetchall()
+#         return investments
+#
 def get_investments():
     with get_db_cursor() as cursor:
-        cursor.execute("SELECT im.investment_id, investment_mode, market_code "
-                       "FROM fact_investment_growth ig join dim_investment_master im "
-                       "on ig.investment_id = im.investment_id where `date`=CURDATE()")
+        cursor.execute("SELECT start_date, investment_id, investment_mode, market_code "
+                       "FROM dim_investment_master where lower(investment_mode) in  ('mutual funds', 'stocks')")
         investments = cursor.fetchall()
         return investments
+
+def delete_historical_value():
+    with get_db_cursor(commit=True) as cursor:
+        cursor.execute("delete from fact_investment_growth")
+
+        deleted = cursor.rowcount
+
+    logger_DAO.info(f"Deleted {deleted} old values of the invested stock/funds.")
+
+def insert_historical_value(investments_growth):
+    with get_db_cursor(commit=True) as cursor:
+        cursor.executemany("insert into fact_investment_growth (date, investment_id, current_value) "
+                           "values (%s, %s, %s)", (investments_growth))
+
+        inserted = cursor.rowcount
+        if cursor.rowcount == 0:
+            logger_DAO.warning(
+                f"No funds were inserted for investment_id: {investments_growth[0]['investment_id']}"
+            )
+
+    logger_DAO.info(f"Inserted {inserted} new values of the invested stock/funds.")

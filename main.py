@@ -13,11 +13,10 @@ if __name__ == '__main__':
         services.insert_stock_etf_symbols()
 
         #Updates the mutual funds and stock values
-        services.update_current_value()
+        services.update_historic_value()
 
         logger.info("Daily investment sync completed successfully")
 
     except Exception:
         logger.exception("Daily investment sync failed")
         raise
-
