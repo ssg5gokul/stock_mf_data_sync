@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           # If you have a requirements file:
-          # pip install -r requirements.txt 
+          pip install -r requirements.txt 
           # Or install specific packages your script needs:
           # pip install pandas requests 
           echo "Installing dependencies..."
@@ -27,7 +27,7 @@ jobs:
       - name: Run Data Ingress Script
         run: |
           echo "Starting to run Money Box Stock/Mutual data ingress ....."
-          python your_script_name.py  # Replace with your actual filename
+          python main.py  # Replace with your actual filename
 
       - name: Archive the log file
         if: always() # This ensures logs upload even if the script crashes
