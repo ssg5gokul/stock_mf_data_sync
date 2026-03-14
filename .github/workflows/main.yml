@@ -24,6 +24,14 @@ jobs:
           # pip install pandas requests 
           echo "Installing dependencies..."
 
+      - name: Create .env file
+        run: |
+          echo "API_URL=${{ secrets.API_URL }}" >> .env
+          echo "MYSQLHOST=${{ secrets.MYSQLHOST }}" >> .env
+          echo "MYSQLPASSWORD=${{ secrets.MYSQLPASSWORD }}" >> .env
+          echo "MYSQLUSER=${{ secrets.MYSQLUSER }}" >> .env
+          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
+
       - name: Run Data Ingress Script
         run: |
           echo "Starting to run Money Box Stock/Mutual data ingress ....."
