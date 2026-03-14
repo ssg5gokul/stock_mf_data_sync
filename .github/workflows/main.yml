@@ -2,7 +2,7 @@ name: Money Box Stock/Mutual data ingress
 on:
   schedule:
     # Run every day at noon UTC
-    - cron: '30 3 * * 1-6'
+    - cron: '30 3 * * 1,4'
   workflow_dispatch:
 
 jobs:
