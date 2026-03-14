@@ -1,8 +1,7 @@
 name: Money Box Stock/Mutual data ingress
 on:
   schedule:
-    # Run every day at noon UTC
-    - cron: '30 3 * * 1,4'
+    - cron: '30 3 * * 1,4' # Runs at 03:30 AM on Monday and Thursday
   workflow_dispatch:
 
 jobs:
@@ -11,5 +10,28 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Run a scheduled task
-        run: echo "Starting to run Money Box Stock/Mutual data ingress ....."
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          # If you have a requirements file:
+          # pip install -r requirements.txt 
+          # Or install specific packages your script needs:
+          # pip install pandas requests 
+          echo "Installing dependencies..."
+
+      - name: Run Data Ingress Script
+        run: |
+          echo "Starting to run Money Box Stock/Mutual data ingress ....."
+          python your_script_name.py  # Replace with your actual filename
+
+      - name: Archive the log file
+        if: always() # This ensures logs upload even if the script crashes
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-app-logs
+          path: my_app.log
