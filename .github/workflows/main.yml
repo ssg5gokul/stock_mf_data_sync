@@ -1,0 +1,15 @@
+name: Money Box Stock/Mutual data ingress
+on:
+  schedule:
+    # Run every day at noon UTC
+    - cron: '30 3 * * 1-6'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run a scheduled task
+        run: echo "Starting to run Money Box Stock/Mutual data ingress ....."
