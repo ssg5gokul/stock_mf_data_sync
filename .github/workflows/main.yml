@@ -1,0 +1,43 @@
+name: Money Box Stock/Mutual data ingress
+on:
+  schedule:
+    - cron: '30 3 * * 1,4' # Runs at 03:30 AM on Monday and Thursday
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          # If you have a requirements file:
+          pip install -r requirements.txt 
+          # Or install specific packages your script needs:
+          # pip install pandas requests 
+          echo "Installing dependencies..."
+
+      - name: Run Data Ingress Script
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          MYSQLHOST: ${{ secrets.MYSQLHOST }}
+          MYSQLPASSWORD: ${{ secrets.MYSQLPASSWORD }}
+          MYSQLUSER: ${{ secrets.MYSQLUSER }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          PORT: ${{ secrets.PORT }}
+        run: |
+          python main.py
+
+      - name: Archive the log file
+        if: always() # This ensures logs upload even if the script crashes
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-app-logs
+          path: my_app.log
