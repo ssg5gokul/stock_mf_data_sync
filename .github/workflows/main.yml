@@ -31,6 +31,7 @@ jobs:
           MYSQLPASSWORD: ${{ secrets.MYSQLPASSWORD }}
           MYSQLUSER: ${{ secrets.MYSQLUSER }}
           MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          PORT: ${{ secrets.PORT }}
         run: |
           python main.py
 
