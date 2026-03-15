@@ -16,6 +16,7 @@ def get_db_cursor(commit=False):
     connection = mysql.connector.connect(
         host=os.getenv("MYSQLHOST"),
         user=os.getenv("MYSQLUSER"),
+        port=28133,
         password=os.getenv("MYSQLPASSWORD"),
         database=os.getenv("MYSQL_DATABASE")
     )
