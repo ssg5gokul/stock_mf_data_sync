@@ -4,6 +4,8 @@ import my_logger
 import nsetools
 from nsefin import nse
 from datetime import datetime
+import requests
+
 
 
 TODAY = str(datetime.today())
