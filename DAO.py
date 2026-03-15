@@ -13,6 +13,11 @@ logger_DAO = my_logger.config_logger(__name__)
 
 @contextmanager
 def get_db_cursor(commit=False):
+    
+    print("MYSQLHOST:", os.getenv("MYSQLHOST"))
+    print("MYSQLUSER:", os.getenv("MYSQLUSER"))
+    print("MYSQL_DATABASE:", os.getenv("MYSQL_DATABASE"))
+    
     connection = mysql.connector.connect(
         host=os.getenv("MYSQLHOST"),
         user=os.getenv("MYSQLUSER"),
@@ -20,10 +25,6 @@ def get_db_cursor(commit=False):
         password=os.getenv("MYSQLPASSWORD"),
         database=os.getenv("MYSQL_DATABASE")
     )
-
-    print("MYSQLHOST:", os.getenv("MYSQLHOST"))
-    print("MYSQLUSER:", os.getenv("MYSQLUSER"))
-    print("MYSQL_DATABASE:", os.getenv("MYSQL_DATABASE"))
 
     if connection.is_connected():
         logger_DAO.debug("DB Connection is established")
