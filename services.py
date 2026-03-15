@@ -3,7 +3,6 @@ from StockAPI import StockData, StockClient
 from mfAPI import MfData, MfClient
 import DAO
 import my_logger
-import requests
 
 logger_services = my_logger.config_logger(__name__)
 stock_client = StockClient()
