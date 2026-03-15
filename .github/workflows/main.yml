@@ -24,18 +24,15 @@ jobs:
           # pip install pandas requests 
           echo "Installing dependencies..."
 
-      - name: Create .env file
-        run: |
-          echo "API_URL=${{ secrets.API_URL }}" >> .env
-          echo "MYSQLHOST=${{ secrets.MYSQLHOST }}" >> .env
-          echo "MYSQLPASSWORD=${{ secrets.MYSQLPASSWORD }}" >> .env
-          echo "MYSQLUSER=${{ secrets.MYSQLUSER }}" >> .env
-          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
-
       - name: Run Data Ingress Script
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          MYSQLHOST: ${{ secrets.MYSQLHOST }}
+          MYSQLPASSWORD: ${{ secrets.MYSQLPASSWORD }}
+          MYSQLUSER: ${{ secrets.MYSQLUSER }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
         run: |
-          echo "Starting to run Money Box Stock/Mutual data ingress ....."
-          python main.py  # Replace with your actual filename
+          python main.py
 
       - name: Archive the log file
         if: always() # This ensures logs upload even if the script crashes
