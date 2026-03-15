@@ -16,6 +16,7 @@ def get_db_cursor(commit=False):
     connection = mysql.connector.connect(
         host=os.getenv("MYSQLHOST"),
         user=os.getenv("MYSQLUSER"),
+        port=int(os.getenv("PORT")),
         password=os.getenv("MYSQLPASSWORD"),
         database=os.getenv("MYSQL_DATABASE")
     )
@@ -78,7 +79,7 @@ def insert_stocks(stocks):
                            "scheme_symbol = new_data.scheme_symbol, "
                            "asset_type = new_data.asset_type;", stocks)
 
-        if cursor.rowcount == 0:
+        if cursor.rowcount <= 0:
             logger_DAO.warning(
                 f"No Stocks inserted on {date.today()}"
             )
