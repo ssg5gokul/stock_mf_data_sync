@@ -11,12 +11,19 @@ logger_StockAPI = my_logger.config_logger(__name__)
 
 class StockClient:
     def __init__(self):
+        self.session = requests.Session()
+        self.session.headers.update({
+            "User-Agent": "Mozilla/5.0",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept": "application/json"
+        })
         self.nse_stocks = None
         self.nse_etf = None
         self.stock_symbols = []
         self.etf_symbols = []
 
     def connect(self):
+        self.session.get("https://www.nseindia.com")
         try:
             self.nse_stocks = nsetools.nse.Nse()
             self.nse_etf = nse
