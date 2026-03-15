@@ -84,7 +84,7 @@ def insert_stocks(stocks):
                 f"No Stocks inserted on {date.today()}"
             )
 
-    logger_DAO.info(f"Inserted {cursor.rowcount} new stock symbols into asset_master table.")
+        logger_DAO.info(f"Inserted {cursor.rowcount} new stock symbols into asset_master table.")
 
 
 def delete_stocks():
