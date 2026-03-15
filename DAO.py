@@ -21,6 +21,10 @@ def get_db_cursor(commit=False):
         database=os.getenv("MYSQL_DATABASE")
     )
 
+    print("MYSQLHOST:", os.getenv("MYSQLHOST"))
+    print("MYSQLUSER:", os.getenv("MYSQLUSER"))
+    print("MYSQL_DATABASE:", os.getenv("MYSQL_DATABASE"))
+
     if connection.is_connected():
         logger_DAO.debug("DB Connection is established")
 
