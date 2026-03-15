@@ -3,6 +3,16 @@ from StockAPI import StockData, StockClient
 from mfAPI import MfData, MfClient
 import DAO
 import my_logger
+import requests
+
+session = requests.Session()
+
+session.headers.update({
+    "User-Agent": "Mozilla/5.0",
+    "Accept-Language": "en-US,en;q=0.9"
+})
+
+session.get("https://www.nseindia.com")
 
 
 logger_services = my_logger.config_logger(__name__)

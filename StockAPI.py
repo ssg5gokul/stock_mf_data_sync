@@ -91,3 +91,5 @@ class StockData:
             return None
 
 
+s = StockData()
+s.client.nse_stocks.get_quote()
