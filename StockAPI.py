@@ -90,6 +90,3 @@ class StockData:
             logger_StockAPI.error(f"Error receiving historical data - {e}")
             return None
 
-
-s = StockData()
-s.client.nse_stocks.get_quote()
