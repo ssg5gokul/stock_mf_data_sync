@@ -132,8 +132,10 @@ def update_current_value(code, val):
 #
 def get_investments():
     with get_db_cursor() as cursor:
-        cursor.execute("SELECT start_date, investment_id, investment_mode, market_code "
-                       "FROM dim_investment_master where lower(investment_mode) in  ('mutual funds', 'stocks')")
+        cursor.execute("SELECT market_code, investment_mode, min(start_date) as start_date "
+                       "from dim_investment_master "
+                       "where lower(investment_mode) in  ('mutual funds', 'stocks') "
+                       "group by market_code, investment_mode;")
         investments = cursor.fetchall()
         return investments
 
@@ -147,7 +149,7 @@ def delete_historical_value():
 
 def insert_historical_value(investments_growth):
     with get_db_cursor(commit=True) as cursor:
-        cursor.executemany("insert into fact_investment_growth (date, investment_id, current_value) "
+        cursor.executemany("insert into fact_investment_growth (date, market_code, current_value) "
                            "values (%s, %s, %s)", (investments_growth))
 
         inserted = cursor.rowcount

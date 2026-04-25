@@ -49,7 +49,6 @@ def update_historic_value():
     for inv in invest:
         try:
             st_date = inv.get('start_date')
-            inv_id = inv.get('investment_id')
             mode = (inv.get('investment_mode') or "").lower()
             code = inv.get('market_code').strip()
 
@@ -70,9 +69,9 @@ def update_historic_value():
                 continue
 
             value_datewise_df['Date'] = value_datewise_df['Date'].dt.strftime('%Y-%m-%d')
-            value_datewise_df.insert(loc=1, column="investment_id", value=inv_id)
+            value_datewise_df.insert(loc=1, column="market_code", value=code)
             results = list(value_datewise_df.itertuples(index=False, name=None))
-
+            logger_services.info(results)
             DAO.insert_historical_value(results)
 
         except Exception as e:

@@ -99,3 +99,4 @@ class StockData:
             logger_StockAPI.error(f"Error receiving historical data - {e}")
             return None
 
+
